@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>ld29 - under the surfice</title>
+	<script src="jquery-2.1.0.min.js"></script>
+	<style>
+
+	</style>
+</head>
+<body>
+<div style="margin-right:auto;margin-left:auto;display:block;width:320px; height:320px;">
+	<canvas style="border:1px dotted #000;" id="game" width="320"
+			height="320"></canvas>
+	<!--
+	<form style="display:block;border:1px solid #F00">
+		<div style="margin-right:auto;margin-left:auto;border:0px solid brown; width:150px">
+			<label for="game-scale"></label>
+			<input id="game-scale" type="range" min="1" max="10"/>
+		</div>
+	</form>
+	-->
+</div>
+<script type="application/javascript">
+	var G = {
+
+		ctx: null,
+		scale: null,
+
+		init: function (ctx, scale) {
+			G.ctx = ctx;
+			G.scale = scale;
+
+			G.ctx.scale(G.scale, G.scale);
+
+			P.init(0,0);
+
+			setTimeout(G.update, 1000 / 60);
+			requestAnimationFrame(G.draw);
+		},
+		draw: function () {
+			G.ctx.clearRect(0, 0, 32, 32);
+
+			P.draw(G.ctx);
+
+			requestAnimationFrame(G.draw);
+		},
+
+		update: function () {
+			P.update();
+			setTimeout(G.update, 1000 / 60);
+		}
+	};
+	var P = {
+
+		x: null,
+		y: null,
+		h: 1,
+		w: 1,
+
+		init : function (x,y) {
+			P.x = x;
+			P.y = y;
+		},
+
+		update : function () {
+			if (P.x <= 30) {
+				P.x += 1;
+			} else {
+				P.x = 0;
+				if (P.y <= 30) {
+					P.y += 1;
+
+				} else {
+					P.y = 0;
+				}
+			}
+		},
+
+		draw : function (ctx) {
+			//console.log('p.draw');
+			ctx.fillStyle = 'black';
+			ctx.fillRect(P.x, P.y, P.w, P.h);
+		}
+	};
+
+	$(function () {
+		var canvas = document.getElementById('game'),
+				ctx = canvas.getContext('2d'),
+				scale = 10;
+
+
+		G.init(ctx, scale);
+		G.draw();
+
+		$('#game-scale').change(function (e) {
+			G.scale = this.value;
+			G.draw();
+		});
+	});
+</script>
+
+</body>
+</html>
