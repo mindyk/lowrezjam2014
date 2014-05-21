@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>ld29 - under the surfice</title>
+	<title>#lowrezjam 2014</title>
 	<script src="jquery-2.1.1.min.js"></script>
 	<style>
 
@@ -21,181 +21,266 @@
 	-->
 </div>
 <script type="application/javascript">
-	var G = {
+var G = {
 
-		ctx: null,
-		scale: null,
-
-
-		init: function (ctx, scale) {
-			G.ctx = ctx;
-			G.scale = scale;
-
-			G.ctx.scale(G.scale, G.scale);
-
-			P.init(0, 28);
-			W.init();
-
-			setTimeout(G.update, 1000 / 60);
-			requestAnimationFrame(G.draw);
-		},
-
-		draw: function () {
-			G.ctx.clearRect(0, 0, 32, 32);
-
-			W.draw(G.ctx);
-			P.draw(G.ctx);
-			G.ctx.fillText(P.MEM_MOVED, 0, 10);
-			requestAnimationFrame(G.draw);
-		},
-
-		update: function () {
-			W.update();
-			P.update();
-			setTimeout(G.update, 1000 / 60);
-		},
+	ctx: null,
+	scale: null,
 
 
-		reset: function () {
+	init: function (ctx, scale) {
+		G.ctx = ctx;
+		G.scale = scale;
 
-		}
-	};
+		G.ctx.scale(G.scale, G.scale);
 
-	var W = {
+		P.init(0, 28);
+		W.init();
 
-		gaps: [],
+		setTimeout(G.update, 1000 / 60);
+		requestAnimationFrame(G.draw);
+	},
 
-		init: function () {
+	draw: function () {
+		G.ctx.clearRect(0, 0, 32, 32);
 
-			for (var i = 0; i <= 32; i++) {
-				var rand = Math.floor((Math.random() * 10) + 1);
-				if (i == 0) {
-					W.gaps.push(0);
+		W.draw(G.ctx);
+		P.draw(G.ctx);
+		G.ctx.fillText(P.MEM_MOVED, 0, 10);
+		requestAnimationFrame(G.draw);
+	},
+
+	update: function () {
+		W.update();
+		P.update();
+		setTimeout(G.update, 1000 / 60);
+	},
+
+
+	reset: function () {
+
+	}
+};
+
+var W = {
+
+	gaps: [],
+
+	init: function () {
+
+		for (var i = 0; i <= 32; i++) {
+			var rand = Math.floor((Math.random() * 10) + 1);
+			if (i == 0) {
+				W.gaps.push(0);
+			} else {
+				if (rand > 5) {
+					W.gaps.push(1);
 				} else {
-					if (rand > 5) {
-						W.gaps.push(1);
-					} else {
-						W.gaps.push(0);
-					}
+					W.gaps.push(0);
 				}
 			}
-
-			/*
-			 console.log(W.gaps);
-			 G.ctx.fillStyle = 'lightblue';
-			 for (var i = 0; i<= W.gaps.length; i++) {
-			 console.log(W.gaps[i] != 0);
-			 if (W.gaps[i] != 0) {
-
-			 G.ctx.fillRect(i, 29, 1,1);
-			 }
-			 }
-			 */
-		},
-
-		update: function () {
-			if (P.MEM_LAST_MOVE != 0) {
-				console.log("moved");
-				for (var i = 0; i <= P.MEM_LAST_MOVE; i++) {
-					var rand = Math.floor((Math.random() * 10) + 1);
-					if (rand > 5) {
-						W.gaps.push(1);
-					} else {
-						W.gaps.push(0);
-					}
-				}
-
-				P.MEM_LAST_MOVE = 0;
-				console.log(W.gaps.length);
-			}
-		},
-
-		draw: function (ctx) {
-			ctx.fillStyle = 'lightblue';
-			ctx.fillRect(0, 0, 32, 32);
-			ctx.fillStyle = 'green';
-			ctx.fillRect(0, 29, 32, 3);
-
-			ctx.fillStyle = 'lightblue';
-
-			for (var i = P.MEM_MOVED; i <= W.gaps.length; i++) {
-				console.log(i);
-				//console.log(W.gaps[i]);
-				if (W.gaps[i] != 0) {
-					ctx.fillRect(i, 29, 1, 1);
-				}
-			}
-
 		}
-	};
 
-	var P = {
+		/*
+		 console.log(W.gaps);
+		 G.ctx.fillStyle = 'lightblue';
+		 for (var i = 0; i<= W.gaps.length; i++) {
+		 console.log(W.gaps[i] != 0);
+		 if (W.gaps[i] != 0) {
 
-		x: null,
-		y: null,
-		h: 1,
-		w: 1,
-		MEM_MOVED: 0,
-		MEM_LAST_MOVE: 0,
+		 G.ctx.fillRect(i, 29, 1,1);
+		 }
+		 }
+		 */
+	},
 
-		init: function (x, y) {
-			P.x = x;
-			P.y = y;
+	update: function () {
+		if (P.MEM_LAST_MOVE != 0) {
+			console.log("moved");
+			for (var i = 0; i <= P.MEM_LAST_MOVE; i++) {
+				var rand = Math.floor((Math.random() * 10) + 1);
+				if (rand > 5) {
+					W.gaps.push(1);
+				} else {
+					W.gaps.push(0);
+				}
+			}
 
-			$(window).keydown(P.input);
-		},
+			P.MEM_LAST_MOVE = 0;
+			console.log(W.gaps.length);
+		}
+	},
 
-		update: function () {
-		},
+	draw: function (ctx) {
+		ctx.fillStyle = 'lightblue';
+		ctx.fillRect(0, 0, 32, 32);
+		ctx.fillStyle = 'green';
+		ctx.fillRect(0, 29, 32, 3);
 
-		draw: function (ctx) {
-			//console.log('p.draw');
-			ctx.fillStyle = 'black';
-			ctx.fillRect(P.x, P.y, P.w, P.h);
-		},
+		ctx.fillStyle = 'lightblue';
 
-		input: function (e) {
-			//console.log(e.which);
+		for (var i = P.MEM_MOVED; i <= W.gaps.length; i++) {
+			console.log(i);
+			//console.log(W.gaps[i]);
+			if (W.gaps[i] != 0) {
+				ctx.fillRect(i, 29, 1, 1);
+			}
+		}
 
-			var move = 0;
+	}
+};
+
+var P = {
+
+	x: null,
+	y: null,
+	h: 1,
+	w: 1,
+	MEM_MOVED: 0,
+	MEM_LAST_MOVE: 0,
+
+	init: function (x, y) {
+		P.x = x;
+		P.y = y;
+
+		$(window).keydown(P.input);
+	},
+
+	update: function () {
+	},
+
+	draw: function (ctx) {
+		//console.log('p.draw');
+		ctx.fillStyle = 'black';
+		ctx.fillRect(P.x, P.y, P.w, P.h);
+	},
+
+	input: function (e) {
+		//console.log(e.which);
+
+		var move = 0;
+		switch (e.which) {
+			case 49:
+				move = 1;
+				break;
+			case 50:
+				move = 2;
+				break;
+			case 51:
+				move = 3;
+				break;
+		}
+
+		P.move(move);
+	},
+
+	move: function (val) {
+		P.x += val;
+		P.MEM_MOVED += val;
+		P.MEM_LAST_MOVE = val;
+
+		console.log(P.MEM_LAST_MOVE, 'P.MEM_LAST_MOVE');
+	}
+};
+
+var T = {
+	ctx: null,
+	scale: 1,
+	gaps: [],
+	MEM_MOVE_TOTAL: 0,
+	MEM_MOVE_LAST: 0,
+
+	init: function (ctx, scale) {
+		console.log("T.init");
+		ctx.scale(scale, scale);
+		T.scale = scale;
+		T.ctx = ctx;
+
+		// update on keydown
+		$(window).keydown(function (e) {
 			switch (e.which) {
+				case 32:
+					T.update();
+					T.draw(ctx);
+					break;
 				case 49:
-					move = 1;
+					T.move(1);
 					break;
 				case 50:
-					move = 2;
+					T.move(2);
 					break;
 				case 51:
-					move = 3;
+					T.move(3);
+					break;
+				default:
+					console.log(e.which);
 					break;
 			}
-
-			P.move(move);
-		},
-
-		move: function (val) {
-			P.x += val;
-			P.MEM_MOVED += val;
-			P.MEM_LAST_MOVE = val;
-
-			console.log(P.MEM_LAST_MOVE, 'P.MEM_LAST_MOVE');
-		}
-	};
-
-	$(function () {
-		var canvas = document.getElementById('game'),
-				ctx = canvas.getContext('2d'),
-				scale = 10;
-
-
-		G.init(ctx, scale);
-		G.draw();
-
-		$('#game-scale').change(function (e) {
-			G.scale = this.value;
-			G.draw();
 		});
-	});
+
+		// init gaps
+		for (var i = 0; i <= 32; i++) {
+			var rand = Math.floor((Math.random() * 10) + 1);
+			if (i == 0) {
+				T.gaps.push(0);
+			} else {
+				if (rand > 5) {
+					T.gaps.push(1);
+				} else {
+					T.gaps.push(0);
+				}
+			}
+		}
+
+		T.draw(ctx);
+	},
+
+	move: function (val) {
+		console.log(val, "T.move");
+		T.MEM_MOVE_LAST = val;
+	},
+
+	update: function () {
+		console.log(T.MEM_MOVE_LAST, "T.update");
+
+		if (T.MEM_MOVE_LAST == 0) {
+			return;
+		}
+
+		T.MEM_MOVE_TOTAL += T.MEM_MOVE_LAST;
+		for (var i = 0; i < T.MEM_MOVE_LAST; i++) {
+			T.gaps.shift();
+			var rand = Math.floor((Math.random() * 10) + 1);
+			if (rand > 5) {
+				T.gaps.push(1);
+			} else {
+				T.gaps.push(0);
+			}
+		}
+		T.MEM_MOVE_LAST = 0;
+	},
+
+	draw: function (ctx) {
+		ctx.clearRect(0,0,32,32);
+		console.log(T.gaps, T.gaps.length);
+
+		for (var i = 0; i <= T.gaps.length; i++) {
+			if (T.gaps[i] == 0) {
+				ctx.fillRect(i, 31, 1, 1);
+			}
+		}
+	}
+};
+
+$(function () {
+	var canvas = document.getElementById('game'),
+			ctx = canvas.getContext('2d'),
+			scale = 10;
+
+	T.init(ctx, scale);
+
+	//G.init(ctx, scale);
+	//G.draw();
+});
 </script>
 
 </body>
