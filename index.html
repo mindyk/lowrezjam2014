@@ -4,13 +4,22 @@
 	<title>#lowrezjam 2014</title>
 	<script src="jquery-2.1.1.min.js"></script>
 	<style>
-
+		body {
+			margin:0px;
+			padding:0px;
+		}
 	</style>
 </head>
 <body>
 <div style="margin-right:auto;margin-left:auto;display:block;width:320px; height:320px;">
-	<canvas style="border:1px dotted #000;" id="game" width="320"
+	<canvas style="border:0px dotted #000;" id="game" width="320"
 			height="320"></canvas>
+	<p style="background-color:#FFF;color:#333;">Press 1-9 to move accordingly.</p>
+	<p style="color:#333;">Press R to restart</p>
+	<!-- i reached Npx moving Npx/sec while jumping N times in total, play http://mindyk.github.io/lowrezjam2014 #tlprtr -->
+	<textarea  id="preview" cols="35" rows="5" disabled="disabled">play http://mindyk.github.io/lowrezjam2014 #tlprtr</textarea><br />
+	<a id="tweet_highscore" href="https://twitter.com/intent/tweet?button_hashtag=tlprtr&text=play%20http%3A%2F%2Fmindyk.github.io%2Flowrezjam2014" class="twitter-hashtag-button" data-related="bebopbraunbaer">Tweet #tlprtr</a>
+	<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 	<!--
 	<form style="display:block;border:1px solid #F00">
 		<div style="margin-right:auto;margin-left:auto;border:0px solid brown; width:150px">
@@ -187,40 +196,82 @@ var T = {
 	scale: 1,
 	gaps: [],
 	MEM_MOVE_TOTAL: 0,
+	MEM_MOVES_TOTAL: 0,
 	MEM_MOVE_LAST: 0,
+	MEM_START: 0,
+	MEM_END : 0,
+	MEM_HARD: 2,
+	MEM_HARD_START : 2,
 
 	init: function (ctx, scale) {
-		console.log("T.init");
+		//ctx.webkitImageSmoothingEnabled = false;
+		//ctx.mozImageSmoothingEnabled = false;
+		ctx.imageSmoothingEnabled = false;
+		//console.log("T.init");
 		ctx.scale(scale, scale);
 		T.scale = scale;
 		T.ctx = ctx;
 
 		// update on keydown
 		$(window).keydown(function (e) {
+
 			switch (e.which) {
 				case 32:
 					T.update();
 					T.draw(ctx);
 					break;
 				case 49:
+				case 97:
 					T.move(1);
 					break;
 				case 50:
+				case 98:
 					T.move(2);
 					break;
 				case 51:
+				case 99:
 					T.move(3);
+					break;
+				case 52:
+				case 100:
+					T.move(4);
+					break;
+				case 53:
+				case 101:
+					T.move(5);
+					break;
+				case 54:
+				case 102:
+					T.move(6);
+					break;
+				case 55:
+				case 103:
+					T.move(7);
+					break;
+				case 56:
+				case 104:
+					T.move(8);
+					break;
+				case 57:
+				case 105:
+					T.move(9);
+					break;
+				case 82:
+					T.reset();
 					break;
 				default:
 					console.log(e.which);
 					break;
 			}
+
+			T.update();
+			T.draw(ctx);
 		});
 
 		// init gaps
 		for (var i = 0; i <= 32; i++) {
 			var rand = Math.floor((Math.random() * 10) + 1);
-			if (i == 0) {
+			if (i == 3) {
 				T.gaps.push(0);
 			} else {
 				if (rand > 5) {
@@ -231,43 +282,316 @@ var T = {
 			}
 		}
 
+		N.init(ctx);
+		T.P.init();
 		T.draw(ctx);
 	},
 
+	start : function () {
+		//console.log('T.start');
+		T.MEM_START = Math.floor(Date.now() /1000);
+		//console.log(T.MEM_START);
+	},
+
 	move: function (val) {
-		console.log(val, "T.move");
+		if (T.MEM_END != 0) {
+			return;
+		}
+		T.MEM_MOVES_TOTAL += 1;
+		if (T.MEM_START == 0) {
+			T.start();
+		}
+		//console.log(val, "T.move");
 		T.MEM_MOVE_LAST = val;
 	},
 
+	calcHard : function (n) {
+		if (n <= 100) {
+			T.MEM_HARD = 2;
+		}
+
+		if (n <= 200) {
+			T.MEM_HARD = 3;
+		}
+		if (n <= 300) {
+			T.MEM_HARD = 4;
+		}
+		if (n <= 400) {
+			T.MEM_HARD = 5;
+		}
+		if (n <= 500) {
+			T.MEM_HARD = 6;
+		}
+
+
+	},
+
 	update: function () {
-		console.log(T.MEM_MOVE_LAST, "T.update");
+		//console.log(T.MEM_MOVE_LAST, "T.update");
 
 		if (T.MEM_MOVE_LAST == 0) {
 			return;
 		}
 
+
 		T.MEM_MOVE_TOTAL += T.MEM_MOVE_LAST;
+		T.calcHard(T.MEM_MOVE_TOTAL);
 		for (var i = 0; i < T.MEM_MOVE_LAST; i++) {
 			T.gaps.shift();
 			var rand = Math.floor((Math.random() * 10) + 1);
-			if (rand > 5) {
+			if (rand > T.MEM_HARD) {
 				T.gaps.push(1);
 			} else {
 				T.gaps.push(0);
 			}
 		}
+		T.DRAW_MOVE = T.MEM_MOVE_LAST;
 		T.MEM_MOVE_LAST = 0;
+
+
+		T.P.update();
+
+		if (T.gaps[3] == 1) {
+			T.MEM_MOVE_TOTAL -= T.DRAW_MOVE;
+			T.P.die();
+			//console.log('dead');
+		}
 	},
 
 	draw: function (ctx) {
 		ctx.clearRect(0,0,32,32);
-		console.log(T.gaps, T.gaps.length);
+		//console.log(T.gaps, T.gaps.length);
+		// last move
+		//ctx.fillStyle = '#000';
+		//ctx.fillRect(0,0, T.DRAW_MOVE, 1);
+		ctx.fillStyle = '#87cefa';
+		ctx.fillRect(0,0,32,32);
 
+
+		ctx.fillStyle = '#333';
 		for (var i = 0; i <= T.gaps.length; i++) {
 			if (T.gaps[i] == 0) {
 				ctx.fillRect(i, 31, 1, 1);
 			}
 		}
+		T.P.draw(ctx);
+		N.draw(T.MEM_MOVE_TOTAL);
+	},
+
+	reset : function () {
+		//console.log('T.reset');
+		T.MEM_MOVE_LAST = 0;
+		T.MEM_MOVE_TOTAL = 0;
+		T.DRAW_MOVE = 0;
+		T.MEM_START = 0;
+		T.MEM_END = 0;
+		T.MEM_HARD = T.MEM_HARD_START;
+		T.MEM_MOVES_TOTAL = 0;
+		T.P.color = 'ffa07a';
+		T.gaps = [];
+		for (var i = 0; i <= 32; i++) {
+			var rand = Math.floor((Math.random() * 10) + 1);
+			if (i == 3) {
+				T.gaps.push(0);
+			} else {
+				if (rand > 5) {
+					T.gaps.push(1);
+				} else {
+					T.gaps.push(0);
+				}
+			}
+		}
+
+		T.draw(T.ctx);
+	},
+
+	P: {
+		x:3,
+		y:30,
+		color: 'ffa07a',
+		rgb: {r:255, g:160, b:122},
+		alpha : 1,
+
+		init : function (){
+			//setInterval(T.P.blink, 500);
+		},
+
+		draw : function (ctx){
+			ctx.fillStyle = '#' + this.color;
+			//ctx.fillStyle = "rgba(" + T.P.rgb.r + "," + T.P.rgb.g +"," + T.P.rgb.b + "," + T.P.alpha +")";
+			ctx.fillRect(this.x, this.y, 1,1);
+		},
+
+		update : function (){},
+
+		die: function () {
+			this.color = '333';
+			T.MEM_END = Math.floor(Date.now() /1000);
+			T.MEM_GAME_TIME = T.MEM_END - T.MEM_START;
+			//console.log(T.MEM_GAME_TIME, 'gametime');
+			T.MEM_PX_PER_SEC = Math.floor(T.MEM_MOVE_TOTAL / T.MEM_GAME_TIME);
+			if (!isFinite(T.MEM_PX_PER_SEC)) {
+				T.MEM_PX_PER_SEC = T.MEM_MOVE_TOTAL;
+			}
+			//console.log(T.MEM_PX_PER_SEC, "px per second");
+			//console.log(T.MEM_MOVES_TOTAL, "moves total");
+			//this.y += 1;
+			T.MEM_SCORE = Math.floor((T.MEM_MOVE_TOTAL * (T.MEM_PX_PER_SEC/ 2)) / (T.MEM_MOVES_TOTAL / 2) * 10);
+			//console.log(T.MEM_SCORE, "score");
+			//N.y = 10;
+
+			var scoreText = "i reached " + T.MEM_MOVE_TOTAL + "px moving " + T.MEM_PX_PER_SEC + "px/sec while jumping " + T.MEM_MOVES_TOTAL + " times, play http://mindyk.github.io/lowrezjam2014",
+				anchor = '<a id="tweet_highscore" href="https://twitter.com/intent/tweet?button_hashtag=tlprtr&text=" class="twitter-hashtag-button" data-related="bebopbraunbaer">Tweet #tlprtr</a>',
+				href = $(anchor).attr('href'),
+				hrefNew = href + encodeURIComponent(scoreText);
+			//console.log(anchor, "anchor");
+			$("#preview").val(scoreText);
+			$('#tweet_highscore').replaceWith(anchor);
+			$('#tweet_highscore').attr('href', hrefNew);
+
+			twttr.widgets.load();
+		},
+
+		blink : function () {
+			if(T.P.alpha == 1) {
+				T.P.alpha = 0;
+			} else {
+				T.P.alpha = 1;
+			}
+
+			T.draw(T.ctx);
+		}
+
+
+	}
+};
+
+var N = {
+	y: 1,
+	x: 27,
+	xDefault : 27,
+	load : 0,
+
+
+	init : function (ctx) {
+		//console.log("N.init");
+		N.ctx = ctx;
+		N.imgZero = new Image();
+		N.imgZero.src = 'zero.png';
+		N.imgOne = new Image();
+		N.imgOne.src = 'one.png';
+		N.imgTwo = new Image();
+		N.imgTwo.src = 'two.png';
+		N.imgThree = new Image();
+		N.imgThree.src = 'three.png';
+		N.imgFour = new Image();
+		N.imgFour.src = 'four.png';
+		N.imgFive = new Image();
+		N.imgFive.src = 'five.png';
+		N.imgSix = new Image();
+		N.imgSix.src = 'six.png';
+		N.imgSeven = new Image();
+		N.imgSeven.src = 'seven.png';
+		N.imgEight = new Image();
+		N.imgEight.src = 'eight.png';
+		N.imgNine = new Image();
+		N.imgNine.src = 'nine.png';
+		N.imgNine.onload = function () {
+			N.load = 1;
+		};
+
+	},
+
+	draw : function (n) {
+		//console.log(n, "n.draw");
+
+		// check if images are loaded
+		if(N.load == 0) {
+			setTimeout(function() {
+				N.draw(n);
+			}, 100);
+			return;
+		}
+
+		if (n >= 10) {
+			// cast to string to traverse
+			n = n + '';
+			for (var i= n.length -1; i>= 0; i--) {
+				N.draw(n[i]);
+				N.x -= 4;
+			}
+			N.x = N.xDefault;
+		}
+
+		// cast to int to enable switch
+		n*= 1;
+		switch(n) {
+			case 0:
+				N.zero(N.x);
+				break;
+			case 1:
+				N.one(N.x);
+				break;
+			case 2:
+				N.two(N.x);
+				break;
+			case 3:
+				N.three(N.x);
+				break;
+			case 4:
+				N.four(N.x);
+				break;
+			case 5:
+				N.five(N.x);
+				break;
+			case 6:
+				N.six(N.x);
+				break;
+			case 7:
+				N.seven(N.x);
+				break;
+			case 8:
+				N.eight(N.x);
+				break;
+			case 9:
+				N.nine(N.x);
+				break;
+			default:
+				//console.log(n);
+				break;
+		}
+	},
+
+	zero : function (x) {
+		N.ctx.drawImage(N.imgZero, x, N.y);
+
+	},
+	one : function (x) {
+		N.ctx.drawImage(N.imgOne, x, N.y);
+	},
+	two : function (x) {
+		N.ctx.drawImage(N.imgTwo, x, N.y);
+	},
+	three : function (x) {
+		N.ctx.drawImage(N.imgThree, x, N.y);
+	},
+	four : function (x) {
+		N.ctx.drawImage(N.imgFour, x, N.y);
+	},
+	five : function (x) {
+		N.ctx.drawImage(N.imgFive, x, N.y);
+	},
+	six : function (x) {
+		N.ctx.drawImage(N.imgSix, x, N.y);
+	},
+	seven : function (x) {
+		N.ctx.drawImage(N.imgSeven, x, N.y);
+	},
+	eight : function (x) {
+		N.ctx.drawImage(N.imgEight, x, N.y);
+	},
+	nine : function (x) {
+		N.ctx.drawImage(N.imgNine, x, N.y);
 	}
 };
 
