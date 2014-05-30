@@ -216,9 +216,13 @@ var T = {
 		$(window).keydown(function (e) {
 
 			switch (e.which) {
+				case 27:
+					T.ctx.restore();
+					break;
 				case 32:
-					T.update();
-					T.draw(ctx);
+					T.ctx.save();
+					T.ctx.translate(32,0);
+					T.ctx.rotate(Math.PI / 2);
 					break;
 				case 49:
 				case 97:
