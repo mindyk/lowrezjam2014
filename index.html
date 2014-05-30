@@ -5,8 +5,8 @@
 	<script src="jquery-2.1.1.min.js"></script>
 	<style>
 		body {
-			margin:0px;
-			padding:0px;
+			margin: 0px;
+			padding: 0px;
 		}
 	</style>
 </head>
@@ -15,11 +15,23 @@
 	<canvas style="border:0px dotted #000;" id="game" width="320"
 			height="320"></canvas>
 	<p style="background-color:#FFF;color:#333;">Press 1-9 to move accordingly.</p>
+
 	<p style="color:#333;">Press R to restart</p>
 	<!-- i reached Npx moving Npx/sec while jumping N times in total, play http://mindyk.github.io/lowrezjam2014 #tlprtr -->
-	<textarea  id="preview" cols="35" rows="5" disabled="disabled">play http://mindyk.github.io/lowrezjam2014 #tlprtr</textarea><br />
-	<a id="tweet_highscore" href="https://twitter.com/intent/tweet?button_hashtag=tlprtr&text=play%20http%3A%2F%2Fmindyk.github.io%2Flowrezjam2014" class="twitter-hashtag-button" data-related="bebopbraunbaer">Tweet #tlprtr</a>
-	<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+	<textarea id="preview" cols="35" rows="5" disabled="disabled">play http://mindyk.github.io/lowrezjam2014
+		#tlprtr</textarea><br/>
+	<a id="tweet_highscore"
+	   href="https://twitter.com/intent/tweet?button_hashtag=tlprtr&text=play%20http%3A%2F%2Fmindyk.github.io%2Flowrezjam2014"
+	   class="twitter-hashtag-button" data-related="bebopbraunbaer">Tweet #tlprtr</a>
+	<script>!function (d, s, id) {
+		var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';
+		if (!d.getElementById(id)) {
+			js = d.createElement(s);
+			js.id = id;
+			js.src = p + '://platform.twitter.com/widgets.js';
+			fjs.parentNode.insertBefore(js, fjs);
+		}
+	}(document, 'script', 'twitter-wjs');</script>
 	<!--
 	<form style="display:block;border:1px solid #F00">
 		<div style="margin-right:auto;margin-left:auto;border:0px solid brown; width:150px">
@@ -30,178 +42,20 @@
 	-->
 </div>
 <script type="application/javascript">
-var G = {
 
-	ctx: null,
-	scale: null,
-
-
-	init: function (ctx, scale) {
-		G.ctx = ctx;
-		G.scale = scale;
-
-		G.ctx.scale(G.scale, G.scale);
-
-		P.init(0, 28);
-		W.init();
-
-		setTimeout(G.update, 1000 / 60);
-		requestAnimationFrame(G.draw);
-	},
-
-	draw: function () {
-		G.ctx.clearRect(0, 0, 32, 32);
-
-		W.draw(G.ctx);
-		P.draw(G.ctx);
-		G.ctx.fillText(P.MEM_MOVED, 0, 10);
-		requestAnimationFrame(G.draw);
-	},
-
-	update: function () {
-		W.update();
-		P.update();
-		setTimeout(G.update, 1000 / 60);
-	},
-
-
-	reset: function () {
-
-	}
-};
-
-var W = {
-
-	gaps: [],
-
-	init: function () {
-
-		for (var i = 0; i <= 32; i++) {
-			var rand = Math.floor((Math.random() * 10) + 1);
-			if (i == 0) {
-				W.gaps.push(0);
-			} else {
-				if (rand > 5) {
-					W.gaps.push(1);
-				} else {
-					W.gaps.push(0);
-				}
-			}
-		}
-
-		/*
-		 console.log(W.gaps);
-		 G.ctx.fillStyle = 'lightblue';
-		 for (var i = 0; i<= W.gaps.length; i++) {
-		 console.log(W.gaps[i] != 0);
-		 if (W.gaps[i] != 0) {
-
-		 G.ctx.fillRect(i, 29, 1,1);
-		 }
-		 }
-		 */
-	},
-
-	update: function () {
-		if (P.MEM_LAST_MOVE != 0) {
-			console.log("moved");
-			for (var i = 0; i <= P.MEM_LAST_MOVE; i++) {
-				var rand = Math.floor((Math.random() * 10) + 1);
-				if (rand > 5) {
-					W.gaps.push(1);
-				} else {
-					W.gaps.push(0);
-				}
-			}
-
-			P.MEM_LAST_MOVE = 0;
-			console.log(W.gaps.length);
-		}
-	},
-
-	draw: function (ctx) {
-		ctx.fillStyle = 'lightblue';
-		ctx.fillRect(0, 0, 32, 32);
-		ctx.fillStyle = 'green';
-		ctx.fillRect(0, 29, 32, 3);
-
-		ctx.fillStyle = 'lightblue';
-
-		for (var i = P.MEM_MOVED; i <= W.gaps.length; i++) {
-			console.log(i);
-			//console.log(W.gaps[i]);
-			if (W.gaps[i] != 0) {
-				ctx.fillRect(i, 29, 1, 1);
-			}
-		}
-
-	}
-};
-
-var P = {
-
-	x: null,
-	y: null,
-	h: 1,
-	w: 1,
-	MEM_MOVED: 0,
-	MEM_LAST_MOVE: 0,
-
-	init: function (x, y) {
-		P.x = x;
-		P.y = y;
-
-		$(window).keydown(P.input);
-	},
-
-	update: function () {
-	},
-
-	draw: function (ctx) {
-		//console.log('p.draw');
-		ctx.fillStyle = 'black';
-		ctx.fillRect(P.x, P.y, P.w, P.h);
-	},
-
-	input: function (e) {
-		//console.log(e.which);
-
-		var move = 0;
-		switch (e.which) {
-			case 49:
-				move = 1;
-				break;
-			case 50:
-				move = 2;
-				break;
-			case 51:
-				move = 3;
-				break;
-		}
-
-		P.move(move);
-	},
-
-	move: function (val) {
-		P.x += val;
-		P.MEM_MOVED += val;
-		P.MEM_LAST_MOVE = val;
-
-		console.log(P.MEM_LAST_MOVE, 'P.MEM_LAST_MOVE');
-	}
-};
 
 var T = {
 	ctx: null,
 	scale: 1,
 	gaps: [],
+	powerups: [],
 	MEM_MOVE_TOTAL: 0,
 	MEM_MOVES_TOTAL: 0,
 	MEM_MOVE_LAST: 0,
 	MEM_START: 0,
-	MEM_END : 0,
+	MEM_END: 0,
 	MEM_HARD: 2,
-	MEM_HARD_START : 2,
+	MEM_HARD_START: 2,
 
 	init: function (ctx, scale) {
 		//ctx.webkitImageSmoothingEnabled = false;
@@ -217,12 +71,10 @@ var T = {
 
 			switch (e.which) {
 				case 27:
-					T.ctx.restore();
+
 					break;
 				case 32:
-					T.ctx.save();
-					T.ctx.translate(32,0);
-					T.ctx.rotate(Math.PI / 2);
+
 					break;
 				case 49:
 				case 97:
@@ -288,12 +140,13 @@ var T = {
 
 		N.init(ctx);
 		T.P.init();
+		I.init(ctx);
 		T.draw(ctx);
 	},
 
-	start : function () {
+	start: function () {
 		//console.log('T.start');
-		T.MEM_START = Math.floor(Date.now() /1000);
+		T.MEM_START = Math.floor(Date.now() / 1000);
 		//console.log(T.MEM_START);
 	},
 
@@ -301,6 +154,13 @@ var T = {
 		if (T.MEM_END != 0) {
 			return;
 		}
+
+		if (T.MEM_POWERUP_TWO == 1) {
+			if (val % 2 != 0) {
+				return;
+			}
+		}
+
 		T.MEM_MOVES_TOTAL += 1;
 		if (T.MEM_START == 0) {
 			T.start();
@@ -309,7 +169,7 @@ var T = {
 		T.MEM_MOVE_LAST = val;
 	},
 
-	calcHard : function (n) {
+	calcHard: function (n) {
 		if (n <= 100) {
 			T.MEM_HARD = 2;
 		}
@@ -336,7 +196,19 @@ var T = {
 		if (T.MEM_MOVE_LAST == 0) {
 			return;
 		}
+		if (T.powerups.length >= 1) {
+			for (var x = 0; x < T.powerups.length; x++) {
+				var currentPowerUp = T.powerups[x];
+				if (currentPowerUp.x < 0) {
 
+					//console.log(T.powerups.length, 'remove powerup');
+					T.powerups.splice(x, 1);
+					//console.log(T.powerups.length, 'removed powerup');
+					continue;
+				}
+				T.powerups[x].update(T.MEM_MOVE_LAST);
+			}
+		}
 
 		T.MEM_MOVE_TOTAL += T.MEM_MOVE_LAST;
 		T.calcHard(T.MEM_MOVE_TOTAL);
@@ -345,8 +217,28 @@ var T = {
 			var rand = Math.floor((Math.random() * 10) + 1);
 			if (rand > T.MEM_HARD) {
 				T.gaps.push(1);
+
 			} else {
+				var spawn = Math.floor((Math.random() * 100) + 1);
+				if (spawn >= 90) {
+					var spawnWhich = Math.floor((Math.random() * 3) + 1),
+							spawnType;
+					switch (spawnWhich) {
+						case 1:
+							spawnType = 'rotate';
+							break;
+						case 2:
+							spawnType = 'blind';
+							break;
+						case 3:
+							spawnType = 'two';
+							break;
+					}
+					T.powerups.push(new rotate(33 - T.MEM_MOVE_LAST + i, spawnType));
+					//console.log(T.powerups.length, 'add powerup');
+				}
 				T.gaps.push(0);
+
 			}
 		}
 		T.DRAW_MOVE = T.MEM_MOVE_LAST;
@@ -363,13 +255,13 @@ var T = {
 	},
 
 	draw: function (ctx) {
-		ctx.clearRect(0,0,32,32);
+		ctx.clearRect(0, 0, 32, 32);
 		//console.log(T.gaps, T.gaps.length);
 		// last move
 		//ctx.fillStyle = '#000';
 		//ctx.fillRect(0,0, T.DRAW_MOVE, 1);
 		ctx.fillStyle = '#87cefa';
-		ctx.fillRect(0,0,32,32);
+		ctx.fillRect(0, 0, 32, 32);
 
 
 		ctx.fillStyle = '#333';
@@ -378,11 +270,26 @@ var T = {
 				ctx.fillRect(i, 31, 1, 1);
 			}
 		}
+
+		if (T.powerups.length >= 1) {
+			for (var x = 0; x < T.powerups.length; x++) {
+				T.powerups[x].draw(ctx);
+			}
+		}
+
+
 		T.P.draw(ctx);
 		N.draw(T.MEM_MOVE_TOTAL);
+		I.draw();
+
+		if (T.MEM_POWERUP_BLIND == 1) {
+			ctx.fillStyle = '#333';
+			ctx.fillRect(16, 0, 16, 32);
+		}
+
 	},
 
-	reset : function () {
+	reset: function () {
 		//console.log('T.reset');
 		T.MEM_MOVE_LAST = 0;
 		T.MEM_MOVE_TOTAL = 0;
@@ -391,8 +298,11 @@ var T = {
 		T.MEM_END = 0;
 		T.MEM_HARD = T.MEM_HARD_START;
 		T.MEM_MOVES_TOTAL = 0;
+		T.MEM_POWERUP_BLIND = 0;
+		T.MEM_POWERUP_TWO = 0;
 		T.P.color = 'ffa07a';
 		T.gaps = [];
+		T.powerups = [];
 		for (var i = 0; i <= 32; i++) {
 			var rand = Math.floor((Math.random() * 10) + 1);
 			if (i == 3) {
@@ -409,28 +319,73 @@ var T = {
 		T.draw(T.ctx);
 	},
 
-	P: {
-		x:3,
-		y:30,
-		color: 'ffa07a',
-		rgb: {r:255, g:160, b:122},
-		alpha : 1,
+	powerup: function (which) {
+		switch (which) {
+			case 'rotate':
+				I.start();
+				T.ctx.save();
+				T.ctx.translate(32, 0);
+				T.ctx.rotate(Math.PI / 2);
+				setTimeout(function () {
+					T.powerdown('rotate');
+				}, 5000);
+				break;
+			case 'blind':
+				T.MEM_POWERUP_BLIND = 1;
+				setTimeout(function () {
+					T.powerdown('blind');
+				}, 5000);
+				break;
+			case 'two':
+				T.MEM_POWERUP_TWO = 1;
+				setTimeout(function () {
+					T.powerdown('two');
+				}, 5000);
+				break;
 
-		init : function (){
+		}
+
+	},
+
+	powerdown: function (which) {
+		switch (which) {
+			case 'rotate':
+				T.ctx.restore();
+				break;
+			case 'blind':
+				T.MEM_POWERUP_BLIND = 0;
+				break;
+			case 'two':
+				T.MEM_POWERUP_BLIND = 0;
+				break;
+		}
+
+		T.draw(T.ctx);
+	},
+
+	P: {
+		x: 3,
+		y: 30,
+		color: 'ffa07a',
+		rgb: {r: 255, g: 160, b: 122},
+		alpha: 1,
+
+		init: function () {
 			//setInterval(T.P.blink, 500);
 		},
 
-		draw : function (ctx){
+		draw: function (ctx) {
 			ctx.fillStyle = '#' + this.color;
 			//ctx.fillStyle = "rgba(" + T.P.rgb.r + "," + T.P.rgb.g +"," + T.P.rgb.b + "," + T.P.alpha +")";
-			ctx.fillRect(this.x, this.y, 1,1);
+			ctx.fillRect(this.x, this.y, 1, 1);
 		},
 
-		update : function (){},
+		update: function () {
+		},
 
 		die: function () {
 			this.color = '333';
-			T.MEM_END = Math.floor(Date.now() /1000);
+			T.MEM_END = Math.floor(Date.now() / 1000);
 			T.MEM_GAME_TIME = T.MEM_END - T.MEM_START;
 			//console.log(T.MEM_GAME_TIME, 'gametime');
 			T.MEM_PX_PER_SEC = Math.floor(T.MEM_MOVE_TOTAL / T.MEM_GAME_TIME);
@@ -440,14 +395,14 @@ var T = {
 			//console.log(T.MEM_PX_PER_SEC, "px per second");
 			//console.log(T.MEM_MOVES_TOTAL, "moves total");
 			//this.y += 1;
-			T.MEM_SCORE = Math.floor((T.MEM_MOVE_TOTAL * (T.MEM_PX_PER_SEC/ 2)) / (T.MEM_MOVES_TOTAL / 2) * 10);
+			T.MEM_SCORE = Math.floor((T.MEM_MOVE_TOTAL * (T.MEM_PX_PER_SEC / 2)) / (T.MEM_MOVES_TOTAL / 2) * 10);
 			//console.log(T.MEM_SCORE, "score");
 			//N.y = 10;
 
 			var scoreText = "i reached " + T.MEM_MOVE_TOTAL + "px moving " + T.MEM_PX_PER_SEC + "px/sec while jumping " + T.MEM_MOVES_TOTAL + " times, play http://mindyk.github.io/lowrezjam2014",
-				anchor = '<a id="tweet_highscore" href="https://twitter.com/intent/tweet?button_hashtag=tlprtr&text=" class="twitter-hashtag-button" data-related="bebopbraunbaer">Tweet #tlprtr</a>',
-				href = $(anchor).attr('href'),
-				hrefNew = href + encodeURIComponent(scoreText);
+					anchor = '<a id="tweet_highscore" href="https://twitter.com/intent/tweet?button_hashtag=tlprtr&text=" class="twitter-hashtag-button" data-related="bebopbraunbaer">Tweet #tlprtr</a>',
+					href = $(anchor).attr('href'),
+					hrefNew = href + encodeURIComponent(scoreText);
 			//console.log(anchor, "anchor");
 			$("#preview").val(scoreText);
 			$('#tweet_highscore').replaceWith(anchor);
@@ -456,8 +411,8 @@ var T = {
 			twttr.widgets.load();
 		},
 
-		blink : function () {
-			if(T.P.alpha == 1) {
+		blink: function () {
+			if (T.P.alpha == 1) {
 				T.P.alpha = 0;
 			} else {
 				T.P.alpha = 1;
@@ -473,11 +428,11 @@ var T = {
 var N = {
 	y: 1,
 	x: 27,
-	xDefault : 27,
-	load : 0,
+	xDefault: 27,
+	load: 0,
 
 
-	init : function (ctx) {
+	init: function (ctx) {
 		//console.log("N.init");
 		N.ctx = ctx;
 		N.imgZero = new Image();
@@ -506,12 +461,12 @@ var N = {
 
 	},
 
-	draw : function (n) {
+	draw: function (n) {
 		//console.log(n, "n.draw");
 
 		// check if images are loaded
-		if(N.load == 0) {
-			setTimeout(function() {
+		if (N.load == 0) {
+			setTimeout(function () {
 				N.draw(n);
 			}, 100);
 			return;
@@ -520,7 +475,7 @@ var N = {
 		if (n >= 10) {
 			// cast to string to traverse
 			n = n + '';
-			for (var i= n.length -1; i>= 0; i--) {
+			for (var i = n.length - 1; i >= 0; i--) {
 				N.draw(n[i]);
 				N.x -= 4;
 			}
@@ -528,8 +483,8 @@ var N = {
 		}
 
 		// cast to int to enable switch
-		n*= 1;
-		switch(n) {
+		n *= 1;
+		switch (n) {
 			case 0:
 				N.zero(N.x);
 				break;
@@ -566,38 +521,101 @@ var N = {
 		}
 	},
 
-	zero : function (x) {
+	zero: function (x) {
 		N.ctx.drawImage(N.imgZero, x, N.y);
 
 	},
-	one : function (x) {
+	one: function (x) {
 		N.ctx.drawImage(N.imgOne, x, N.y);
 	},
-	two : function (x) {
+	two: function (x) {
 		N.ctx.drawImage(N.imgTwo, x, N.y);
 	},
-	three : function (x) {
+	three: function (x) {
 		N.ctx.drawImage(N.imgThree, x, N.y);
 	},
-	four : function (x) {
+	four: function (x) {
 		N.ctx.drawImage(N.imgFour, x, N.y);
 	},
-	five : function (x) {
+	five: function (x) {
 		N.ctx.drawImage(N.imgFive, x, N.y);
 	},
-	six : function (x) {
+	six: function (x) {
 		N.ctx.drawImage(N.imgSix, x, N.y);
 	},
-	seven : function (x) {
+	seven: function (x) {
 		N.ctx.drawImage(N.imgSeven, x, N.y);
 	},
-	eight : function (x) {
+	eight: function (x) {
 		N.ctx.drawImage(N.imgEight, x, N.y);
 	},
-	nine : function (x) {
+	nine: function (x) {
 		N.ctx.drawImage(N.imgNine, x, N.y);
 	}
 };
+
+var I = {
+	state: 0,
+
+	init: function (ctx) {
+		I.ctx = ctx;
+		I.imgRotate = new Image();
+		I.imgRotate.src = 'rotate.png';
+	},
+
+	draw: function () {
+		if (I.state == 0) {
+			return;
+		}
+		I.ctx.drawImage(I.imgRotate, 7, 7);
+	},
+
+	start: function () {
+		I.state = 1;
+		setTimeout(I.end, 500);
+	},
+
+	end: function () {
+		I.state = 0;
+	}
+};
+
+rotate = function (x, type) {
+	//console.log(x, 'rotate.spawn');
+	this.x = x;
+	this.state = 'untouched';
+	this.name = type;
+
+	this.update = function (n) {
+		//console.log(n, 'rotate.update');
+		this.x -= n;
+		if (this.x == 3) {
+			T.powerup(this.name);
+			this.state = 'touched';
+		}
+	};
+
+	this.draw = function (ctx) {
+		//console.log(this.x, 'rotate.draw');
+		if (this.state != 'untouched') {
+			return;
+		}
+		switch (this.name) {
+			case 'rotate':
+				ctx.fillStyle = 'yellow';
+				break;
+			case 'blind':
+				ctx.fillStyle = 'white';
+				break;
+			case 'two':
+				ctx.fillStyle = 'red';
+				break;
+		}
+
+		ctx.fillRect(this.x, 30, 1, 1);
+	};
+};
+
 
 $(function () {
 	var canvas = document.getElementById('game'),
