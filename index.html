@@ -8,15 +8,32 @@
 			margin: 0px;
 			padding: 0px;
 		}
+		p {
+			margin:0px;
+		}
+
+		h3 {
+			margin-bottom:2px;
+		}
 	</style>
 </head>
 <body>
 <div style="margin-right:auto;margin-left:auto;display:block;width:320px; height:320px;">
 	<canvas style="border:0px dotted #000;" id="game" width="320"
 			height="320"></canvas>
-	<p style="background-color:#FFF;color:#333;">Press 1-9 to move accordingly.</p>
+	<h3>Goal</h3>
+	<p>Try to get as far and as fast as possible.</p>
+	<h3>Ctrl</h3>
+	<p style="background-color:#FFF;color:#333;">Press 1-9 to move 1-9px (numpad enabled).</p>
 
-	<p style="color:#333;">Press R to restart</p>
+	<p style="color:#333;">Press R to restart.</p>
+	<h3>PowerUps</h3>
+	<table>
+		<tr><td>[red]</td><td><strong>modulo 2</strong>, you can use only 2,4,6,8</td></tr>
+		<tr><td>[white]</td><td><strong>blind</strong><strong>blind</strong>, your vision is handicapped</td></tr>
+		<tr><td>[yellow]</td><td><strong>rotate</strong>, the game rotates 90°</td></tr>
+	</table>
+	<h3>Tweet</h3>
 	<!-- i reached Npx moving Npx/sec while jumping N times in total, play http://mindyk.github.io/lowrezjam2014 #tlprtr -->
 	<textarea id="preview" cols="35" rows="5" disabled="disabled">play http://mindyk.github.io/lowrezjam2014
 		#tlprtr</textarea><br/>
@@ -32,6 +49,8 @@
 			fjs.parentNode.insertBefore(js, fjs);
 		}
 	}(document, 'script', 'twitter-wjs');</script>
+	<h3>Description</h3>
+	<p>LOWREZJAM 2014 by <a href="//twitter.com/bebopbraunbaer">@bebopbraunbaer</a></p>
 	<!--
 	<form style="display:block;border:1px solid #F00">
 		<div style="margin-right:auto;margin-left:auto;border:0px solid brown; width:150px">
@@ -320,6 +339,7 @@ var T = {
 	},
 
 	powerup: function (which) {
+
 		switch (which) {
 			case 'rotate':
 				I.start();
@@ -334,13 +354,13 @@ var T = {
 				T.MEM_POWERUP_BLIND = 1;
 				setTimeout(function () {
 					T.powerdown('blind');
-				}, 5000);
+				}, 10000);
 				break;
 			case 'two':
 				T.MEM_POWERUP_TWO = 1;
 				setTimeout(function () {
 					T.powerdown('two');
-				}, 5000);
+				}, 8000);
 				break;
 
 		}
@@ -348,6 +368,7 @@ var T = {
 	},
 
 	powerdown: function (which) {
+		console.log(which, 'powerdown');
 		switch (which) {
 			case 'rotate':
 				T.ctx.restore();
@@ -356,7 +377,7 @@ var T = {
 				T.MEM_POWERUP_BLIND = 0;
 				break;
 			case 'two':
-				T.MEM_POWERUP_BLIND = 0;
+				T.MEM_POWERUP_TWO = 0;
 				break;
 		}
 
