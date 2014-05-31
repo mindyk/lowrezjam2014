@@ -409,18 +409,19 @@ var T = {
 			T.MEM_END = Math.floor(Date.now() / 1000);
 			T.MEM_GAME_TIME = T.MEM_END - T.MEM_START;
 			//console.log(T.MEM_GAME_TIME, 'gametime');
-			T.MEM_PX_PER_SEC = Math.floor(T.MEM_MOVE_TOTAL / T.MEM_GAME_TIME);
+			T.MEM_PX_PER_SEC = T.MEM_MOVE_TOTAL / T.MEM_GAME_TIME;
 			if (!isFinite(T.MEM_PX_PER_SEC)) {
 				T.MEM_PX_PER_SEC = T.MEM_MOVE_TOTAL;
 			}
 			//console.log(T.MEM_PX_PER_SEC, "px per second");
 			//console.log(T.MEM_MOVES_TOTAL, "moves total");
 			//this.y += 1;
-			T.MEM_SCORE = Math.floor((T.MEM_MOVE_TOTAL * (T.MEM_PX_PER_SEC / 2)) / (T.MEM_MOVES_TOTAL / 2) * 10);
+			T.MEM_JUMP_D = Math.floor(T.MEM_MOVE_TOTAL / T.MEM_MOVES_TOTAL);
+			T.MEM_SCORE = Math.floor(T.MEM_MOVE_TOTAL * T.MEM_PX_PER_SEC * T.MEM_JUMP_D);
 			//console.log(T.MEM_SCORE, "score");
 			//N.y = 10;
 
-			var scoreText = "i reached " + T.MEM_MOVE_TOTAL + "px moving " + T.MEM_PX_PER_SEC + "px/sec while jumping " + T.MEM_MOVES_TOTAL + " times, play http://mindyk.github.io/lowrezjam2014",
+			var scoreText = "i reached " + T.MEM_SCORE + " points, play http://mindyk.github.io/lowrezjam2014",
 					anchor = '<a id="tweet_highscore" href="https://twitter.com/intent/tweet?button_hashtag=tlprtr&text=" class="twitter-hashtag-button" data-related="bebopbraunbaer">Tweet #tlprtr</a>',
 					href = $(anchor).attr('href'),
 					hrefNew = href + encodeURIComponent(scoreText);
